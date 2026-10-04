@@ -8,7 +8,7 @@ export async function GET(request:Request) {
 export async function PUT(request:Request) {
   const id = await admin(request); if (!id) return json({error:'Требуется вход в админку'},403);
   const body = await request.json() as {config?: Config; publish?: boolean};
-  const c = body.config;
+  const c = body.config ? {...body.config, theme: 'navy' as const} : undefined;
   if (!c || typeof c.name !== 'string' || !Array.isArray(c.services) || !Number.isInteger(c.posts) || c.posts < 1 || c.posts > 12) return json({error:'Проверьте настройки'},400);
   const now = new Date().toISOString();
   const row = await tenant();

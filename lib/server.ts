@@ -9,7 +9,7 @@ export async function tenant() {
 }
 export async function config(published=true):Promise<Config> {
   const row = await tenant();
-  return row ? JSON.parse(published ? row.published : row.draft) as Config : defaultConfig;
+  return row ? {...JSON.parse(published ? row.published : row.draft) as Config, theme:'navy' as const} : defaultConfig;
 }
 export function signedIn(request:Request) { return request.headers.get('oai-authenticated-user-id'); }
 export async function admin(request:Request) {
