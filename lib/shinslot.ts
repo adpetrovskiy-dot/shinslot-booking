@@ -1,7 +1,7 @@
 export type Service = { id: string; name: string; description: string; price: number; duration: number; icon: string; inspection?: boolean; enabled: boolean };
-export type Config = { name: string; tagline: string; address: string; phone: string; mapUrl: string; heroUrl: string; theme: 'graphite'|'navy'|'light'; posts: number; buffer: number; mode: 'request'|'instant'; open: string; close: string; workDays: number[]; closedDates: string[]; services: Service[]; diameterFactor: Record<string, number>; suvExtra: number; runflatExtra: number; }; 
+export type Config = { name: string; tagline: string; address: string; phone: string; email?: string; mapUrl: string; heroUrl: string; theme: 'graphite'|'navy'|'light'; posts: number; buffer: number; mode: 'request'|'instant'; open: string; close: string; workDays: number[]; closedDates: string[]; services: Service[]; diameterFactor: Record<string, number>; suvExtra: number; runflatExtra: number; }; 
 export const defaultConfig: Config = {
-  name: 'ШинСлот', tagline: 'Шины в порядке. Время под контролем.', address: 'Москва, ул. Автомоторная, 7', phone: '+7 (999) 123-45-67', mapUrl: 'https://yandex.ru/maps/',
+  name: 'ШинСлот', tagline: 'Шины в порядке. Время под контролем.', address: 'Москва, ул. Автомоторная, 7', phone: '+7 (999) 123-45-67', email: '', mapUrl: 'https://yandex.ru/maps/',
   heroUrl: '/hero-blue.jpg', theme: 'navy', posts: 2, buffer: 10, mode: 'request', open: '09:00', close: '21:00', workDays: [1,2,3,4,5,6,0], closedDates: [],
   diameterFactor: {'13': 0.8, '14': 0.9, '15': 1, '16': 1.15, '17': 1.3, '18': 1.5, '19': 1.7, '20': 1.95, '21': 2.2, '22': 2.5}, suvExtra: 500, runflatExtra: 800,
   services: [

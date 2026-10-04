@@ -1,4 +1,4 @@
-import { admin, config, database, json, signedIn, tenant, tenantSlug } from '@/lib/server';
+import { admin, config, database, json, tenant, tenantSlug } from '@/lib/server';
 import { defaultConfig, type Config } from '@/lib/shinslot';
 export async function GET(request:Request) {
   const draft = new URL(request.url).searchParams.get('draft') === '1';
@@ -10,6 +10,7 @@ export async function PUT(request:Request) {
   const body = await request.json() as {config?: Config; publish?: boolean};
   const c = body.config ? {...body.config, theme: 'navy' as const} : undefined;
   if (!c || typeof c.name !== 'string' || !Array.isArray(c.services) || !Number.isInteger(c.posts) || c.posts < 1 || c.posts > 12) return json({error:'Проверьте настройки'},400);
+  if (c.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) return json({error:'Проверьте адрес почты'},400);
   const now = new Date().toISOString();
   const row = await tenant();
   const published = body.publish ? JSON.stringify(c) : row?.published ?? JSON.stringify(defaultConfig);
