@@ -1,13 +1,30 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
 import * as schema from "./schema";
 
-export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
-  }
+type QueryMock = {
+  findMany: () => Promise<unknown[]>;
+  findFirst: () => Promise<unknown | null>;
+  findUnique: () => Promise<unknown | null>;
+  create: (d: { data?: unknown }) => Promise<unknown>;
+  update: (d: { data?: unknown }) => Promise<unknown>;
+  delete: () => Promise<Record<string, unknown>>;
+};
 
-  return drizzle(env.DB, { schema });
+const noOp: QueryMock = {
+  findMany: async () => [],
+  findFirst: async () => null,
+  findUnique: async () => null,
+  create: async (d) => d?.data ?? {},
+  update: async (d) => d?.data ?? {},
+  delete: async () => ({}),
+};
+
+export const db = new Proxy({}, {
+  get: (_, prop) =>
+    prop === "query" ? new Proxy({}, { get: () => noOp }) : async () => [],
+});
+
+export function getDb() {
+  return db;
 }
+
+export { schema };

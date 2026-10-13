@@ -1,12 +1,10 @@
-import { env } from 'cloudflare:workers';
-import { admin, json } from '@/lib/server';
+import { admin, bucket, json } from '@/lib/server';
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export async function POST(request: Request) {
   if (!await admin(request)) return json({ error: 'Нет доступа' }, 403);
-  if (!env.BUCKET) return json({ error: 'Хранилище фото недоступно' }, 503);
   const form = await request.formData();
   const file = form.get('photo');
   if (!(file instanceof File) || !allowedTypes.has(file.type) || file.size === 0 || file.size > MAX_IMAGE_BYTES) {
@@ -21,6 +19,6 @@ export async function POST(request: Request) {
     return json({ error: 'Файл не похож на изображение выбранного формата' }, 400);
   }
   const id = crypto.randomUUID();
-  await env.BUCKET.put(`hero/${id}`, bytes, { httpMetadata: { contentType: file.type } });
+  await bucket.put(`hero/${id}`, bytes, { httpMetadata: { contentType: file.type } });
   return json({ url: `/api/media/hero/${id}` }, 201);
 }
